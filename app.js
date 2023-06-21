@@ -11,32 +11,54 @@ function getData(url) {
   return JSON.parse(ajax.response);
 }
 
-const newsFeed = getData(NEWS_URL);
-const ul = document.createElement('ul');
+function newsFeed() {
+  const newsFeed = getData(NEWS_URL);
+  const newsList = [];
 
-window.addEventListener('hashchange', function(){
-  const id = location.hash.substring(1);
+  newsList.push('<ul>');
+  for(let i = 0; i < 10; i++) {
+    const div = document.createElement('div');
 
-  const newsContent = getData(CONTENT_URL.replace('@id', id));
-  const title = document.createElement('h1');
-
-  title.innerHTML = newsContent.title;
-  content.appendChild(title);
-});
-
-for(let i = 0; i <10; i++) {
-  const div = document.createElement('div');
-
-  div.innerHTML = `
+  newsList.push(`
     <li>
       <a href="#${newsFeed[i].id}">
         ${newsFeed[i].title}(${newsFeed[i].comments_count})
       </a>
     </li>
-  `;
-
-  ul.appendChild(div.firstElementChild);
+  `);
 }
 
-container.appendChild(ul);
-container.appendChild(content);
+newsList.push('</ul>');
+
+container.innerHTML = newsList.join('');
+}
+
+const ul = document.createElement('ul');
+
+function newsDetail(){
+  const id = location.hash.substring(1);
+
+  const newsContent = getData(CONTENT_URL.replace('@id', id));
+
+  container.innerHTML = `
+    <h1>${newsContent.title}</h1>
+
+    <div>
+      <a href="#">목록으로</a>
+    </div>
+  `
+}
+
+function router() {
+  const routePath = location.hash;
+
+  if(routePath === ''){ //location.hash에 #만 들어있을 경우에는 빈 값을 반환한다.
+    newsFeed();
+  } else {
+    newsDetail();
+  }
+}
+
+window.addEventListener('hashchange', router);
+
+router();

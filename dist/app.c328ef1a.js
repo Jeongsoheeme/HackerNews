@@ -128,22 +128,34 @@ function getData(url) {
   ajax.send();
   return JSON.parse(ajax.response);
 }
-var newsFeed = getData(NEWS_URL);
+function newsFeed() {
+  var newsFeed = getData(NEWS_URL);
+  var newsList = [];
+  newsList.push('<ul>');
+  for (var i = 0; i < 10; i++) {
+    var div = document.createElement('div');
+    newsList.push("\n    <li>\n      <a href=\"#".concat(newsFeed[i].id, "\">\n        ").concat(newsFeed[i].title, "(").concat(newsFeed[i].comments_count, ")\n      </a>\n    </li>\n  "));
+  }
+  newsList.push('</ul>');
+  container.innerHTML = newsList.join('');
+}
 var ul = document.createElement('ul');
-window.addEventListener('hashchange', function () {
+function newsDetail() {
   var id = location.hash.substring(1);
   var newsContent = getData(CONTENT_URL.replace('@id', id));
-  var title = document.createElement('h1');
-  title.innerHTML = newsContent.title;
-  content.appendChild(title);
-});
-for (var i = 0; i < 10; i++) {
-  var div = document.createElement('div');
-  div.innerHTML = "\n    <li>\n      <a href=\"#".concat(newsFeed[i].id, "\">\n        ").concat(newsFeed[i].title, "(").concat(newsFeed[i].comments_count, ")\n      </a>\n    </li>\n  ");
-  ul.appendChild(div.firstElementChild);
+  container.innerHTML = "\n    <h1>".concat(newsContent.title, "</h1>\n\n    <div>\n      <a href=\"#\">\uBAA9\uB85D\uC73C\uB85C</a>\n    </div>\n  ");
 }
-container.appendChild(ul);
-container.appendChild(content);
+function router() {
+  var routePath = location.hash;
+  if (routePath === '') {
+    //location.hash에 #만 들어있을 경우에는 빈 값을 반환한다.
+    newsFeed();
+  } else {
+    newsDetail();
+  }
+}
+window.addEventListener('hashchange', router);
+router();
 },{}],"../../../.nvm/versions/node/v16.18.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
